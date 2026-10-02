@@ -5,9 +5,15 @@
 package frc.robot;
 
 import frc.robot.Constants.OperatorConstants;
+import frc.robot.controlschemes.driveScheme;
+import frc.robot.subsystems.drive.DriveIOHardware;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+
+import frc.robot.subsystems.drive.DriveIO;
+import frc.robot.subsystems.drive.DriveIOHardware;
+import frc.robot.subsystems.drive.Drive;
 
 /**
  * WPILib recommends putting most robot logic in here. Creek takes it 1 step further and abstracts it to seperate files
@@ -15,12 +21,16 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
 
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  private final CommandXboxController driverController = new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  
+  private final DrivedriveScheme(driverController, 1);
+  private final DriveIO driveIOHardware = new DriveIOHardware();
+  private final Drive drive = new Drive(driveIOHardware);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() 
   {
+      driveScheme.configure(drive, 1);
 
   }
 
