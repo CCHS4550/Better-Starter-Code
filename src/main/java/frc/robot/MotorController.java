@@ -9,10 +9,10 @@ import frc.robot.Constants;
 
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.spark.config.ClosedLoopConfig;
-
+import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
 //import com.revrobotics.spark.SparkRelativeEncoder;
-
+import com.revrobotics.ResetMode;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
@@ -33,7 +33,6 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
     public final SparkClosedLoopController pidController;
     private final RelativeEncoder encoder;
     private final String name;
-    private double voltageConversionFactor;
 
     private final EncoderConfig encoderConfig;
     private final SparkMaxConfig sparkMaxConfig;
@@ -42,7 +41,6 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         this.name = name;
         motor = new SparkMax(deviceID, motorType);
         pidController = motor.getClosedLoopController();
-        voltageConversionFactor = Constants.OperatorConstants.voltageConversionFactor;
 
         //Encoder config
         encoderConfig = new EncoderConfig();
@@ -54,8 +52,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         sparkMaxConfig.idleMode(idleMode);
         sparkMaxConfig.apply(encoderConfig);
 
-        motor.configure(sparkMaxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
-
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
         encoder = motor.getEncoder();
     }
 
@@ -63,7 +60,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         this(name, deviceID, motorType, inverted, idleMode, 1.0);
     }
 
-    //Built-in
+    //Speed from -1.0 to 1.0 based on motor's available power
     @Override
     public void set(double speed){
         motor.set(speed);
@@ -79,15 +76,6 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         motor.set(0);
     }
 
-    @Override
-    public void setInverted(boolean isInverted){
-        motor.setInverted(isInverted);
-    }
-
-    public void setVoltage(){
-        motor.setVoltage(Constants.OperatorConstants.ShooterVoltage);
-    }
-
     public void setVoltage(double volts){
         double capped = MathUtil.clamp(volts, -12.0, 12.0);
         motor.setVoltage(capped);
@@ -96,6 +84,12 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
     @Override
     public boolean getInverted(){
         return motor.getInverted();
+    }
+
+    @Override
+    public void setInverted(boolean inverted)
+    {
+        motor.setInverted(inverted);
     }
 
     //SparkMax specific
@@ -115,30 +109,21 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         return encoder.getVelocity();
     }
 
-    /* idk what this does lowkey
-    public void setPID(double kP, double kI, double kD, double kFF){
-        pidController.setPIDF(kP, kI, kD, kFF);
-    }
-    */ 
-
-    public void setReferencePosition(double pos){
-        pidController.setReference(pos, ControlType.kPosition);
-    }
-
-    public void setVoltageFromSpeed(double speed){
-        motor.setVoltage(speed * voltageConversionFactor);
+    public void setPID(double kP, double kI, double kD){
+        sparkMaxConfig.closedLoop.p(kP).i(kI).d(kD).outputRange(-12, 12);
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     public void setPositionConversionFactor(double factor){
         encoderConfig.positionConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
-        motor.configure(sparkMaxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     public void setVelocityConversionFactor(double factor){
         encoderConfig.velocityConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
-        motor.configure(sparkMaxConfig, SparkBase.ResetMode.kResetSafeParameters, SparkBase.PersistMode.kNoPersistParameters);
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
     public String getName(){
