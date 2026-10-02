@@ -16,4 +16,11 @@ public final class Constants {
   public static class OperatorConstants {
     public static final int kDriverControllerPort = 0;
   }
+  
+  public static class DriveConstants{
+    public static final int FLdeviceID = 999;
+    public static final int FRdeviceID = 999;
+    public static final int BLdeviceID = 999;
+    public static final int BRdeviceID = 999;
+  }
 }

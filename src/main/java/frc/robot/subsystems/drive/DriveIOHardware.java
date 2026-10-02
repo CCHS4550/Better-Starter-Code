@@ -5,20 +5,18 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.motorcontrol.MotorController;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import frc.helpers.MotorController;
 import frc.robot.Constants;
 
 public class DriveIOHardware implements DriveIO {
-    private edu.wpi.first.wpilibj.motorcontrol.MotorController
     private MotorController frontLeftMotor = new MotorController("FrontLeftMotor",
-            Constants.OperatorConstants.FLdeviceID, MotorType.kBrushless, true, IdleMode.kBrake); // invert 2 left
+            Constants.DriveConstants.FLdeviceID, MotorType.kBrushless, true, IdleMode.kBrake); // invert 2 left
                                                                                                   // motors
     private MotorController frontRightMotor = new MotorController("FrontRightMotor",
-            Constants.OperatorConstants.FRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
-    private MotorController backLeftMotor = new MotorController("BackLeftMotor", Constants.OperatorConstants.BLdeviceID,
+            Constants.DriveConstants.FRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
+    private MotorController backLeftMotor = new MotorController("BackLeftMotor", Constants.DriveConstants.BLdeviceID,
             MotorType.kBrushless, true, IdleMode.kBrake);
     private MotorController backRightMotor = new MotorController("BackRightMotor",
-            Constants.OperatorConstants.BRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
+            Constants.DriveConstants.BRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
 
     private DifferentialDrive frontDifferentialDrive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
     private DifferentialDrive backDifferentialDrive = new DifferentialDrive(backLeftMotor, backRightMotor);
@@ -43,10 +41,6 @@ public class DriveIOHardware implements DriveIO {
                     0);
             backDifferentialDrive.arcadeDrive(Constants.OperatorConstants.driveTrainControllerScalar * forwardSpeed, 0);
         }
-
-        System.out.print(forwardSpeed);
-        System.out.print(", ");
-        System.out.println(turnSpeed);
     }
 
 }
