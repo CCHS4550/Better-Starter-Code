@@ -7,7 +7,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
-//import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -16,8 +15,9 @@ import edu.wpi.first.math.MathUtil;
 
 
 /**
+     * @param name An arbitrary name for the motor
      * @param deviceID The channel of the motor controller
-     * @param controlMode Specify whether the motor controller is operating in Brushed or Brushless mode
+     * @param motorType Specify whether the motor controller is operating in Brushed or Brushless mode
      * @param idleMode Specify whether the motor controller is set to Coast or Brake mode
      * @param reverse Reverses the direction of the motor controller
      * @param positionFactor The ratio of encoder units to desired units (ie. units -> in)
@@ -28,6 +28,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
     public final SparkClosedLoopController pidController;
     private final RelativeEncoder encoder;
     private final String name;
+    private boolean inverted;
 
     private final EncoderConfig encoderConfig;
     private final SparkMaxConfig sparkMaxConfig;
@@ -44,6 +45,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         //SparkMax config
         sparkMaxConfig = new SparkMaxConfig();
         sparkMaxConfig.inverted(inverted);
+        this.inverted = inverted;
         sparkMaxConfig.idleMode(idleMode);
         sparkMaxConfig.apply(encoderConfig);
 
@@ -79,13 +81,15 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
 
     @Override
     public boolean getInverted(){
-        return motor.getInverted();
+        return this.inverted;
     }
 
     @Override
     public void setInverted(boolean inverted)
     {
-        motor.setInverted(inverted);
+        sparkMaxConfig.inverted(inverted);
+        this.inverted = inverted;
+        applyConfig();
     }
 
     //SparkMax specific
@@ -107,25 +111,25 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
 
     public void setPID(double kP, double kI, double kD){
         sparkMaxConfig.closedLoop.p(kP).i(kI).d(kD).outputRange(-12, 12);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public void setFF(double kS, double kG, double kV)
     {
         sparkMaxConfig.closedLoop.feedForward.kS(kS).kG(kG).kV(kV).kCos(kG);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public void setPositionConversionFactor(double factor){
         encoderConfig.positionConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public void setVelocityConversionFactor(double factor){
         encoderConfig.velocityConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public String getName(){
@@ -137,5 +141,11 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
     public void disable() {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'disable'");
+    }
+
+    //quick helper function
+    private void applyConfig()
+    {
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 }
