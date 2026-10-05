@@ -27,22 +27,5 @@ public class ModuleIOSpark implements ModuleIO{
 
     }
 
-    /*
-     * set turn motor to a desire angle, while wrapping the setpoint to prevent invalid inputs and
-     * account for the motor offset no feedforward because there is no velocity goal to achieve
-     *
-     * @param rotation desire module angle in radians
-     */
-    @Override
-    public void setTurnPos(Rotation2d rotation) {
-    double setPoint =
-        MathUtil.inputModulus(
-            rotation.plus(rotationOffset).getRadians(),
-            Constants.DriveConstants.turnPIDMinInput,
-            Constants.DriveConstants.turnPIDMaxInput);
-    double volts =
-        turnPID.calculate((Rotation2d.fromRotations(absoluteEncoder.get())).getRadians(), setPoint);
-    setTurnOpenLoop(volts);
-    }
 }
 
