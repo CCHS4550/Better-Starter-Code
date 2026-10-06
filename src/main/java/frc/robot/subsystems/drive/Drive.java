@@ -35,22 +35,10 @@ public class Drive extends SubsystemBase{
             () -> stopRobot());
     }
 
-    public Command basicTurn(double turn)
-    {
-        return this.runEnd(() -> io.differentialDrive(0, turn), () -> stopRobot());
-    }
-
     public Command autoDriveForward(double speed, double time){
         return Commands.deadline(
             Commands.waitSeconds(time), 
             basicDrive(speed)
-        ).withTimeout(time);
-    }
-
-    public Command autoDriveTurn(double turn, double time){
-        return Commands.deadline(
-            Commands.waitSeconds(time), 
-            basicTurn(turn)
         ).withTimeout(time);
     }
 }
