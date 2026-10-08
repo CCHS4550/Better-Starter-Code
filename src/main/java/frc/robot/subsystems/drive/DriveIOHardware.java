@@ -5,16 +5,16 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import frc.robot.Constants;
-import frc.robot.MotorController;
+import frc.robot.SparkMaxMotorController;
 
 public class DriveIOHardware implements DriveIO {
-    private MotorController frontLeftMotor = new MotorController("FrontLeftMotor",
+    private SparkMaxMotorController frontLeftMotor = new SparkMaxMotorController("FrontLeftMotor",
             Constants.DriveConstants.FLdeviceID, MotorType.kBrushless, true, IdleMode.kBrake); 
-    private MotorController frontRightMotor = new MotorController("FrontRightMotor",
+    private SparkMaxMotorController frontRightMotor = new SparkMaxMotorController("FrontRightMotor",
             Constants.DriveConstants.FRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
-    private MotorController backLeftMotor = new MotorController("BackLeftMotor", Constants.DriveConstants.BLdeviceID,
+    private SparkMaxMotorController backLeftMotor = new SparkMaxMotorController("BackLeftMotor", Constants.DriveConstants.BLdeviceID,
             MotorType.kBrushless, true, IdleMode.kBrake);
-    private MotorController backRightMotor = new MotorController("BackRightMotor",
+    private SparkMaxMotorController backRightMotor = new SparkMaxMotorController("BackRightMotor",
             Constants.DriveConstants.BRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
 
     private DifferentialDrive frontDifferentialDrive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
