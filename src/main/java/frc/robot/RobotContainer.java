@@ -4,29 +4,18 @@
 
 package frc.robot;
 
-import frc.robot.controlschemes.DriveScheme;
-import frc.robot.subsystems.drive.DriveIOHardware;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.drive.DriveIO;
-import frc.robot.subsystems.drive.Drive;
-
-import frc.robot.subsystems.drive.DriveIO;
-import frc.robot.subsystems.drive.DriveIOHardware;
-import frc.robot.subsystems.drive.Drive;
 
 /**
  * WPILib recommends putting most robot logic in here. Creek takes it 1 step further and abstracts it to seperate files
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...  
-  private final DriveScheme driveScheme = new DriveScheme();
-  private final DriveIO driveIOHardware = new DriveIOHardware();
-  private final Drive drive = new Drive(driveIOHardware);
+
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() 
   {
-      driveScheme.configure(drive, 1);
 
   }
 
