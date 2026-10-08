@@ -1,11 +1,9 @@
 package frc.robot.subsystems.drive;
 
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import frc.robot.Constants;
 
 public class Drive extends SubsystemBase{
     public DriveIO io;
@@ -32,7 +30,7 @@ public class Drive extends SubsystemBase{
     public Command basicDrive(double speed){ //Drive straight while executed by command scheduler
         return this.runEnd(
             () -> driveStraight(speed), 
-            () -> stopRobot());
+            this::stopRobot);
     }
 
     public Command autoDriveForward(double speed, double time){

@@ -7,7 +7,6 @@ import com.revrobotics.spark.config.SparkBaseConfig.IdleMode;
 import com.revrobotics.spark.SparkClosedLoopController;
 import com.revrobotics.PersistMode;
 import com.revrobotics.RelativeEncoder;
-//import com.revrobotics.spark.SparkRelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.config.EncoderConfig;
 import com.revrobotics.spark.config.SparkMaxConfig;
@@ -22,7 +21,7 @@ import edu.wpi.first.math.MathUtil;
      * @param positionFactor The ratio of encoder units to desired units (ie. units -> in)
 */
 
-public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.MotorController{
+public class SparkMaxMotorController implements edu.wpi.first.wpilibj.motorcontrol.MotorController{
     private final SparkMax motor;
     public final SparkClosedLoopController pidController;
     private final RelativeEncoder encoder;
@@ -31,7 +30,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
     private final EncoderConfig encoderConfig;
     private final SparkMaxConfig sparkMaxConfig;
 
-    public MotorController(String name, int deviceID, MotorType motorType, boolean inverted, IdleMode idleMode, double positionFactor){
+    public SparkMaxMotorController(String name, int deviceID, MotorType motorType, boolean inverted, IdleMode idleMode, double positionFactor){
         this.name = name;
         motor = new SparkMax(deviceID, motorType);
         pidController = motor.getClosedLoopController();
@@ -46,11 +45,11 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         sparkMaxConfig.idleMode(idleMode);
         sparkMaxConfig.apply(encoderConfig);
 
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
         encoder = motor.getEncoder();
     }
 
-    public MotorController(String name, int deviceID, MotorType motorType, boolean inverted, IdleMode idleMode){
+    public SparkMaxMotorController(String name, int deviceID, MotorType motorType, boolean inverted, IdleMode idleMode){
         this(name, deviceID, motorType, inverted, idleMode, 1.0);
     }
 
@@ -70,6 +69,7 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         motor.set(0);
     }
 
+    @Override
     public void setVoltage(double volts){
         double capped = MathUtil.clamp(volts, -12.0, 12.0);
         motor.setVoltage(capped);
@@ -77,13 +77,14 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
 
     @Override
     public boolean getInverted(){
-        return motor.getInverted();
+        return motor.configAccessor.getInverted();
     }
 
     @Override
     public void setInverted(boolean inverted)
     {
-        motor.setInverted(inverted);
+        sparkMaxConfig.inverted(inverted);
+        applyConfig();
     }
 
     //SparkMax specific
@@ -105,18 +106,22 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
 
     public void setPID(double kP, double kI, double kD){
         sparkMaxConfig.closedLoop.p(kP).i(kI).d(kD).outputRange(-12, 12);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public void setPositionConversionFactor(double factor){
         encoderConfig.positionConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        applyConfig();
     }
 
     public void setVelocityConversionFactor(double factor){
         encoderConfig.velocityConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
+        applyConfig();
+    }
+
+    private void applyConfig(){
         motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
     }
 
@@ -124,10 +129,8 @@ public class MotorController implements edu.wpi.first.wpilibj.motorcontrol.Motor
         return name;
     }
 
-    //don't plan on using this
     @Override
     public void disable() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'disable'");
+        stopMotor();
     }
 }
