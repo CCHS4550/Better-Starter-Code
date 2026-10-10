@@ -14,8 +14,9 @@ import com.revrobotics.spark.config.SparkMaxConfig;
 import edu.wpi.first.math.MathUtil;
 
 /**
+     * @param name A name for the device
      * @param deviceID The channel of the motor controller
-     * @param controlMode Specify whether the motor controller is operating in Brushed or Brushless mode
+     * @param motorType Specify whether the motor controller is Brushed or Brushless
      * @param idleMode Specify whether the motor controller is set to Coast or Brake mode
      * @param reverse Reverses the direction of the motor controller
      * @param positionFactor The ratio of encoder units to desired units (ie. units -> in)
@@ -109,6 +110,12 @@ public class SparkMaxMotorController implements edu.wpi.first.wpilibj.motorcontr
         applyConfig();
     }
 
+    public void setFF(double kS, double kG, double kV)
+    {
+        sparkMaxConfig.closedLoop.feedForward.kS(kS).kG(kG).kCos(kG).kV(kV);
+        applyConfig();
+    }
+
     public void setPositionConversionFactor(double factor){
         encoderConfig.positionConversionFactor(factor);
         sparkMaxConfig.apply(encoderConfig);
@@ -122,7 +129,7 @@ public class SparkMaxMotorController implements edu.wpi.first.wpilibj.motorcontr
     }
 
     private void applyConfig(){
-        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kNoPersistParameters);
+        motor.configure(sparkMaxConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
     }
 
     public String getName(){
