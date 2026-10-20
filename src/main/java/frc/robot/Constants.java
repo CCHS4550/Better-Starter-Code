@@ -53,6 +53,13 @@ public final class Constants {
     public static final double turnPIDMinInput = -Math.PI; // Radians
     public static final double turnPIDMaxInput =Math.PI; // Radians
 
-    public static final int turnMotorCurrentLimit = 60; //no clue where ts came from
+    public static final int driveMotorCurrentLimit = 120;
+    public static final int turnMotorCurrentLimit = 120;
+
+    public static final double driveEncoderPositionFactor = 0; //Find!
+    public static final double driveEncoderVelocityFactor = 0; //Find!
+
+    public static final double turnEncoderPositionFactor = 0; //Find!
+    public static final double turnEncoderVelocityFactor = 0; //Find!
   }
 }
