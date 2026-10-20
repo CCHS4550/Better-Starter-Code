@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import frc.robot.Constants;
 import frc.robot.MotorController;
 
-public class DriveIOHardware {
+public class DriveIOHardware implements DriveIO{
     //MotorController for controlling the motors
     MotorController frontLeftMotor = new MotorController("jimothy", Constants.DriveConstants.FLdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
     MotorController frontRightMotor = new MotorController("timothy", Constants.DriveConstants.FRdeviceID, MotorType.kBrushless, false, IdleMode.kBrake);
@@ -17,6 +17,8 @@ public class DriveIOHardware {
     DifferentialDrive frontDifferentialDrive = new DifferentialDrive(frontLeftMotor, frontRightMotor);
     DifferentialDrive backDifferentialDrive = new DifferentialDrive(backLeftMotor, backRightMotor);
     //function that connects the motors and makes them do something
+
+    @Override
     public void stopRobot()
     {
         frontLeftMotor.set(0);
@@ -25,6 +27,7 @@ public class DriveIOHardware {
         backRightMotor.set(0);
     }
 
+    @Override
     public void tankDrive(double forwardSpeed, double turnSpeed)
     {
         frontDifferentialDrive.arcadeDrive(forwardSpeed, turnSpeed);

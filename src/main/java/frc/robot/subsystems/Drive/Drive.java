@@ -1,9 +1,11 @@
 package frc.robot.subsystems.Drive;
 
-public class Drive {
-    public DriveIOHardware hardware;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-    public Drive(DriveIOHardware hardware)
+public class Drive extends SubsystemBase{
+    public DriveIO hardware;
+
+    public Drive(DriveIO hardware)
     {
         this.hardware = hardware;
     }
